@@ -4,6 +4,8 @@ library(shinythemes)
 library(sf)
 library(broom)
 library(gt)
+library(leaflet)
+library(scales)
 library(tidyverse)
 
 
@@ -11,7 +13,6 @@ ui <- navbarPage(theme = shinytheme("sandstone"), "New York City Airbnb and Hous
                  tabPanel("Neighborhood Graphs",
                           sidebarLayout(
                               sidebarPanel(
-                                  
                                   h4("About"),
                                   p("These graphs display neighborhoods of the New York City boroughs 
                                     and their associated median Airbnb price per night or median home value."),
@@ -36,7 +37,6 @@ ui <- navbarPage(theme = shinytheme("sandstone"), "New York City Airbnb and Hous
                  tabPanel("Price Map",
                           sidebarLayout(
                               sidebarPanel(
-                                  
                                   h4("About"),
                                   p("This map shows the neighborhoods of New York City colored by 
                                   their price. More red neighborhoods are more expensive"),
@@ -47,7 +47,7 @@ ui <- navbarPage(theme = shinytheme("sandstone"), "New York City Airbnb and Hous
                               ),
                               
                               mainPanel(
-                                  plotOutput("map")
+                                  leafletOutput("map")
                               )
                           )
                  ),
@@ -152,7 +152,6 @@ ui <- navbarPage(theme = shinytheme("sandstone"), "New York City Airbnb and Hous
                  ))
 
 
-# Define server logic required to draw a histogram
 server <- function(input, output) {
     
     output$graph1 <- renderPlot({
@@ -248,33 +247,35 @@ server <- function(input, output) {
     })
     
     
-    output$map <- renderPlot({
+    output$map <- renderLeaflet({
         
         nyc_shapes_full <- read_rds("nyc_shapes_clean.rds")
         
         # change units of zhvi before plotting
         
-        nyc_shapes_full <- nyc_shapes_full %>%
-            ungroup(zhvi) %>%
-            mutate(zhvi = zhvi/1000)
+       # nyc_shapes_full <- nyc_shapes_full %>%
+          #  ungroup(zhvi) %>%
+           # mutate(zhvi = zhvi/1000)
         
         # use switch() to change the data to use in our heat map
         
-        data <- switch(input$data, 
-                       '1' = nyc_shapes_full$zhvi,
-                       '2' = nyc_shapes_full$median_ppn)
+         data <- switch(input$data, 
+                    '1' = nyc_shapes_full$zhvi,
+                    '2' = nyc_shapes_full$median_ppn)
         
-        # plot the different data on a map using geom_sf
-        # change the fill gradient colors
-        # add labels and theme
+        pal <- colorNumeric("YlOrRd", domain = data)
         
-        ggplot() + 
-            geom_sf(data = nyc_shapes_full, aes(fill = data)) +
-            scale_fill_gradient(low = "wheat1", high = "red") +
-            labs(title = "Heat Map of NYC Neighborhoods",
-                 fill = case_when(input$data == '1' ~ "Median House Value (thousand $)",
-                                  input$data == '2' ~ "Median Airbnb Price per Night ($)")) +
-            theme_minimal()
+        leaflet(nyc_shapes_full) %>% setView(lng = -73.97, lat = 40.7, zoom = 10) %>% 
+        addProviderTiles(providers$CartoDB.Positron) %>%
+        addPolygons(stroke = TRUE, color = "Black", weight = .3, smoothFactor = 0.3, fillOpacity = 1,
+                      fillColor = ~pal(data),
+                      label = ~paste0(neighbourhood, ": $", format(data, big.mark = ",", scientific = FALSE))) %>%
+            addLegend("bottomright", pal = pal, values = data,
+                      title = case_when(input$data == '1' ~ "Median House Value (thousand $)",
+                                        input$data == '2' ~ "Median Airbnb Price per Night ($)"),
+                      labFormat = labelFormat(prefix = "$"),
+                      opacity = 1
+            )
         
     })
     
