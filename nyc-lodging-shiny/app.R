@@ -7,7 +7,7 @@ library(gt)
 library(tidyverse)
 
 
-ui <- navbarPage(theme = shinytheme("sandstone"), "New York City Lodging Prices",
+ui <- navbarPage(theme = shinytheme("sandstone"), "New York City Airbnb and Housing Prices",
                  tabPanel("Neighborhood Graphs",
                           sidebarLayout(
                               sidebarPanel(
@@ -105,8 +105,18 @@ ui <- navbarPage(theme = shinytheme("sandstone"), "New York City Lodging Prices"
                             not only because it is one of the largest cities in the US, but because it has a very unique
                             housing market that is subject to a number of stereotypes. Through this project, I hope to shed
                             some light on what ideas and theories about New York housing are false, and which hold some truth.
-                            Also by comparing housing value and airbnb prices, I wanted to look a bit into how different
-                            modes of lodging were priced differently in different areas."),
+                            I also used statistical analysis to determine if housing prices in a neighborhood could explain
+                            or even predict airbnb prices in the neighborhood."),
+                          p("The results of analyzing this data confirmed some stereotypes about NYC. For example,
+                            Manhattan had the highest median home values and the highest average Aibnb prices,
+                            and Staten Island had the lowest. However, the two neighborhoods with the highest median Airbnb 
+                            prices were in Staten Island! From my statstical analysis I found a very slight positive correlation
+                            between median housing prices and median airbnb prices in different neighborhoods. Indicating that
+                            generally as house prices increase so would airbnb prices in a neighborhood, but the correlation
+                            was not very strong (and had a low r-squared value of .14) meaning housing prices probably wouldn't
+                            be a very good predictor of airbnb prices. I did run this linear regression on each borough and found
+                            this correlation was slightly positive across the board, with Staten Island having the highest 
+                            correlation and Manhattan having the lowest."),
                           br(),
                           h2("About The Data"),
                           p("Zillow is an online real estate database. Zillow collects data on houses, apartments, condos, etc.
@@ -131,7 +141,14 @@ ui <- navbarPage(theme = shinytheme("sandstone"), "New York City Lodging Prices"
                             being used around the world."),
                           p("This specific data for this project contains host, lodging, location, price, and review information
                             for airbnbs in New York City. I also used data from Inside Airbnb that contained shapefiles for
-                            all the neighborhoods in NYC in order to plot results on a map.")
+                            all the neighborhoods in NYC in order to plot results on a map."),
+                          br(),
+                          h2("Contact"),
+                          p("Hi! I am Molly Chiang, a Sophmore at Harvard College studying Human Evolutionary
+                            Biology, with a new love for data science! I can be reached at mollychiang@college.harvard.edu."),
+                          p("This project was created for my Gov 1005 final project. The code can be accessed from its
+                            github repo at https://github.com/mollyechiang/nyc-lodging.")
+                            
                  ))
 
 
