@@ -6,6 +6,7 @@ library(broom)
 library(gt)
 library(leaflet)
 library(scales)
+library(vembedr)
 library(tidyverse)
 
 
@@ -34,7 +35,8 @@ ui <- navbarPage(theme = shinytheme("sandstone"), "New York City Airbnb and Hous
                            p("A statistical analysis was also run to determine if housing prices in a neighborhood could explain
                             or even predict airbnb prices in the neighborhood. The analysis found a slight positive correlation
                             between median housing prices and median airbnb prices in different neighborhoods across all boroughs, 
-                            so generally as house prices increase so would airbnb prices in a neighborhood."),
+                            so generally as house prices increase so would airbnb prices in a neighborhood.",
+                             align = "center"),
                            br(),
                            h4("New York City Neighborhood Map", align = "center"),
                            leafletOutput("plainmap"),
@@ -146,6 +148,12 @@ ui <- navbarPage(theme = shinytheme("sandstone"), "New York City Airbnb and Hous
                     
                  ),
                  tabPanel("About",
+                          h2("Walkthrough of Website"),
+                          fluidRow(
+                              column(3), 
+                              column(5, embed_url("https://www.youtube.com/watch?v=BP59TGRAFDU")),
+                              column(4)
+                          ),
                           h2("About The Data Behind the Project"),
                           p("Zillow is an online real estate database. Zillow collects data on houses, apartments, condos, etc.
                             that are for sale and for rent all across the United States. It tracks a number of variables
