@@ -20,14 +20,14 @@ ui <- navbarPage(theme = shinytheme("sandstone"), "New York City Airbnb and Hous
                            p("This website explores housing and airbnb prices in New York City. With the 
                              different tabs you can explore different visualizations of these lodging prices
                              in different neighborhoods throughout the city. This project aims to provide insights on 
-                             house/lodging pricing in New York City.New York City is one of the most analyzed cities in 
+                             house/lodging pricing in New York City. New York City is one of the most analyzed cities in 
                              terms of housing and lodging prices,not only because it is one of the largest cities in the US, 
                              but because it has a very unique housing market that is subject to a number of stereotypes. 
                              Through this project, I hope to shed some light on what ideas and theories about New York 
                              housing are false, and which hold some truth.", 
                              align = "center"),
                            p("The results of analyzing this data confirmed some stereotypes about NYC. For example,
-                            Manhattan had the highest median home values and the highest average Aibnb prices,
+                            Manhattan had the highest median home values and the highest average Airbnb prices,
                             and Staten Island had the lowest. However, the two neighborhoods with the highest median Airbnb 
                             prices were in Staten Island!",
                              align = "center"),
@@ -158,9 +158,9 @@ ui <- navbarPage(theme = shinytheme("sandstone"), "New York City Airbnb and Hous
                           p("The specific data from zillow used in this project is from September 30th 2019. 
                           The data contained information on this month's zhvi value for all homes (home, apartment,
                           condo, etc.) on the neighborhood level. Thus, there was data on neighborhoods of metro 
-                          areas all across the US (I, however, selected only NYC data to analyze). The zhvi (Zillow Home Value Index) value is Zillow's smoothed, 
-                          time-dependent measure of the median estimated home value across a given region in USD.
-                            "),
+                          areas all across the US (I, however, selected only NYC data to analyze). The zhvi 
+                          (Zillow Home Value Index) value is Zillow's smoothed, time-dependent measure of the 
+                          median estimated home value across a given region in USD."),
                           br(),
                           p("Airbnb is a website that allows users to arrange and offer lodging. The company is one 
                             of the biggest lodging platforms, with big implications on local hospitality industries. 
