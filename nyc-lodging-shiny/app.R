@@ -10,7 +10,22 @@ library(tidyverse)
 
 
 ui <- navbarPage(theme = shinytheme("sandstone"), "New York City Airbnb and Housing Prices",
-                 tabPanel("Neighborhood Graphs",
+                  tabPanel("Home",
+                           fluidRow(
+                               column(3), 
+                               column(5, img(src = 'photo.png', align = "center", height = "130%", width = "130%")),
+                               column(2)
+                                ),
+                           h2("Welcome!", align = "center"),
+                           p("This website explores housing and airbnb prices in New York City. With the 
+                             different tabs you can explore different visualizations of these lodging prices
+                             in different neighborhoods throughout the city. A statistical analysis was 
+                             also run to determine if housing prices in a neighborhood could explain
+                            or even predict airbnb prices in the neighborhood. In the end,", 
+                             align = "center")
+                           ),
+                           
+                  tabPanel("Neighborhood Graphs",
                           sidebarLayout(
                               sidebarPanel(
                                   h4("About"),
@@ -42,8 +57,7 @@ ui <- navbarPage(theme = shinytheme("sandstone"), "New York City Airbnb and Hous
                                   their price. More red neighborhoods are more expensive"),
                                   radioButtons(inputId = "data", 
                                                label = "Data",
-                                               choices = list("Median House Value" = 1, "Median Airbnb Price Per Night" = 2), selected = 1),
-                                  p("(gray neighborhoods are missing data)")
+                                               choices = list("Median House Value" = 1, "Median Airbnb Price Per Night" = 2), selected = 1)
                               ),
                               
                               mainPanel(
@@ -67,7 +81,7 @@ ui <- navbarPage(theme = shinytheme("sandstone"), "New York City Airbnb and Hous
                                          ),
                                          
                                          mainPanel(
-                                             plotOutput("stats_map")
+                                             leafletOutput("stats_map")
                                          )
                                      )
                             ),
@@ -147,7 +161,12 @@ ui <- navbarPage(theme = shinytheme("sandstone"), "New York City Airbnb and Hous
                           p("Hi! I am Molly Chiang, a Sophmore at Harvard College studying Human Evolutionary
                             Biology, with a new love for data science! I can be reached at mollychiang@college.harvard.edu."),
                           p("This project was created for my Gov 1005 final project. The code can be accessed from its
-                            github repo at https://github.com/mollyechiang/nyc-lodging.")
+                            github repo at https://github.com/mollyechiang/nyc-lodging."),
+                          br(),
+                          hr("Acknowledgments:"),
+                          p("Thank you to David Kane, Zillow, InsiderAirbnb, and all the members of Gov1005 
+                            for helping me with this project!")
+                          
                             
                  ))
 
@@ -251,19 +270,19 @@ server <- function(input, output) {
         
         nyc_shapes_full <- read_rds("nyc_shapes_clean.rds")
         
-        # change units of zhvi before plotting
-        
-       # nyc_shapes_full <- nyc_shapes_full %>%
-          #  ungroup(zhvi) %>%
-           # mutate(zhvi = zhvi/1000)
-        
         # use switch() to change the data to use in our heat map
         
          data <- switch(input$data, 
                     '1' = nyc_shapes_full$zhvi,
                     '2' = nyc_shapes_full$median_ppn)
         
+         # use colorNumeric to code the variation of the data by color
+         
         pal <- colorNumeric("YlOrRd", domain = data)
+        
+        # use leaflet to create interactive map
+        # set intial view point, add tiles, and add colored polygons based on data
+        # add legend for the data
         
         leaflet(nyc_shapes_full) %>% setView(lng = -73.97, lat = 40.7, zoom = 10) %>% 
         addProviderTiles(providers$CartoDB.Positron) %>%
@@ -271,6 +290,7 @@ server <- function(input, output) {
                       fillColor = ~pal(data),
                       label = ~paste0(neighbourhood, ": $", format(data, big.mark = ",", scientific = FALSE))) %>%
             addLegend("bottomright", pal = pal, values = data,
+                      na.label = "No Data",
                       title = case_when(input$data == '1' ~ "Median House Value (thousand $)",
                                         input$data == '2' ~ "Median Airbnb Price per Night ($)"),
                       labFormat = labelFormat(prefix = "$"),
@@ -280,21 +300,34 @@ server <- function(input, output) {
     })
     
     
-    output$stats_map <- renderPlot({
+    output$stats_map <- renderLeaflet({
         
         stats <- read_rds("nyc_statistics.rds")
+        
+        pal <- colorNumeric("YlOrRd", domain = stats$slope)
+        
+        leaflet(stats) %>% setView(lng = -73.97, lat = 40.7, zoom = 10) %>% 
+            addProviderTiles(providers$CartoDB.Positron) %>%
+            addPolygons(stroke = TRUE, color = "Black", weight = .3, smoothFactor = 0.3, fillOpacity = 1,
+                        fillColor = ~pal(stats$slope),
+                        label = stats$boro_name) %>%
+            addLegend("bottomright", pal = pal, values = stats$slope,
+                      na.label = "No Data",
+                      title = "Coefficient",
+                      opacity = 1
+            )
         
         # plot coefficients explaining airbnb price by median home value by borough
         # plot this on a map using geom_sf
         # add labels and theme
         
-        ggplot() + 
-            geom_sf(data = stats, aes(fill = slope)) +
-            scale_fill_gradient(low = "wheat1", high = "red") + 
-            labs(title = "Boroughs Colored by Linear Regression Coefficient",
-                 subtitle = "Coefficient Explains Airbnb Price Per Night by Home Value",
-                 fill = "Coefficient") +
-            theme_minimal()
+       # ggplot() + 
+         #   geom_sf(data = stats, aes(fill = slope)) +
+         #   scale_fill_gradient(low = "wheat1", high = "red") + 
+          #  labs(title = "Boroughs Colored by Linear Regression Coefficient",
+          #       subtitle = "Coefficient Explains Airbnb Price Per Night by Home Value",
+          #       fill = "Coefficient") +
+          #  theme_minimal()
         
     })
     
