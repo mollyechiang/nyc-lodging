@@ -1,0 +1,31 @@
+---
+title: "New York City Airbnb and Housing Prices"
+subtitle: "Do More Expensive Neighborhoods Have More Expensive Airbnbs?"
+author: "Molly Chiang"
+date: "12/13/2019"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+
+library(purrr)
+library(shiny)
+library(shinythemes)
+library(sf)
+library(broom)
+library(gt)
+library(leaflet)
+library(janitor)
+library(scales)
+library(tidyverse)
+
+```
+
+## Abstract
+
+words
+
+## Background and Data
+
+words 
