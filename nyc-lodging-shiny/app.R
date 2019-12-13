@@ -19,11 +19,28 @@ ui <- navbarPage(theme = shinytheme("sandstone"), "New York City Airbnb and Hous
                            h2("Welcome!", align = "center"),
                            p("This website explores housing and airbnb prices in New York City. With the 
                              different tabs you can explore different visualizations of these lodging prices
-                             in different neighborhoods throughout the city. A statistical analysis was 
-                             also run to determine if housing prices in a neighborhood could explain
-                            or even predict airbnb prices in the neighborhood. In the end,", 
-                             align = "center")
-                           ),
+                             in different neighborhoods throughout the city. This project aims to provide insights on 
+                             house/lodging pricing in New York City.New York City is one of the most analyzed cities in 
+                             terms of housing and lodging prices,not only because it is one of the largest cities in the US, 
+                             but because it has a very unique housing market that is subject to a number of stereotypes. 
+                             Through this project, I hope to shed some light on what ideas and theories about New York 
+                             housing are false, and which hold some truth.", 
+                             align = "center"),
+                           p("The results of analyzing this data confirmed some stereotypes about NYC. For example,
+                            Manhattan had the highest median home values and the highest average Aibnb prices,
+                            and Staten Island had the lowest. However, the two neighborhoods with the highest median Airbnb 
+                            prices were in Staten Island!",
+                             align = "center"),
+                           p("A statistical analysis was also run to determine if housing prices in a neighborhood could explain
+                            or even predict airbnb prices in the neighborhood. The analysis found a slight positive correlation
+                            between median housing prices and median airbnb prices in different neighborhoods across all boroughs, 
+                            so generally as house prices increase so would airbnb prices in a neighborhood."),
+                           br(),
+                           h4("New York City Neighborhood Map", align = "center"),
+                           leafletOutput("plainmap"),
+                           br()
+                        
+                     ),
                            
                   tabPanel("Neighborhood Graphs",
                           sidebarLayout(
@@ -52,95 +69,92 @@ ui <- navbarPage(theme = shinytheme("sandstone"), "New York City Airbnb and Hous
                  tabPanel("Price Map",
                           sidebarLayout(
                               sidebarPanel(
-                                  h4("About"),
-                                  p("This map shows the neighborhoods of New York City colored by 
-                                  their price. More red neighborhoods are more expensive"),
+                                  h4("Modulating the Map"),
+                                  p("Select the data you would like to visualize:"),
                                   radioButtons(inputId = "data", 
                                                label = "Data",
                                                choices = list("Median House Value" = 1, "Median Airbnb Price Per Night" = 2), selected = 1)
                               ),
                               
                               mainPanel(
+                                  h2("Heat Map of New York City Neighborhoods by Price"),
+                                  p("This map shows the neighborhoods of New York City colored by 
+                                  their price (either home value or airbnb price per night). 
+                                  More red neighborhoods are more expensive."),
                                   leafletOutput("map")
                               )
                           )
                  ),
-                 navbarMenu("Statistical Analysis",
-                            tabPanel("Map",
-                                     sidebarLayout(
-                                         sidebarPanel(
-                                             h4("About"),
-                                             p("This map shows the boroughs of New York City colored by 
+                 tabPanel("Statistical Analysis",
+                          sidebarLayout(
+                              sidebarPanel(
+                                  h4("Statistical Analysis Story"),
+                                  p("This statistical analysis was run in an attempt to explain airbnb
+                                    prices by median home value prices in a neighborhood of NYC. The 
+                                    analysis was aimed to help answer the question: do more expensive 
+                                    neighborhoods have more expensive airbnbs? A simple linear 
+                                    regression between the two variables was used."),
+                                  p("The regression was run in the different boroughs of the city (map tab) as
+                                    well as overall (graph tab). The coefficients ranged from .06 (Manhattan)
+                                    to .13 (Staten Island) and the overall coefficient was .07."),
+                                  p("The r-squared value for the overall regression indicates a measure
+                                    of fit of this model."),
+                                  p("The 5th and 95th percentile values give an indication of 
+                                    uncertainty of our coefficient value, showing us the 90%
+                                    prediction invterval for the value."),
+                                  p("The purpose of creating this model was as a potential predictor
+                                    or airbnb prices in different neighborhoods. It was meant to help
+                                    predict what airbnb prices would be in a new neighborhood or city
+                                    that just starting allowing the lodging company to be used, for 
+                                    example. The results of this project indicate that using the model
+                                    that was created could give some prediction interval on prices
+                                    based on home values in the area, but including additional variables
+                                    in the model would help to increase certainty.")
+                              ),
+                              mainPanel(
+                                  tabsetPanel(
+                                      tabPanel("Map",
+                                               h2("Map of Boroughs By Regression Coefficient"),
+                                               p("This map shows the boroughs of New York City colored by 
                                                their linear regression coefficient."),
-                                             p("The coefficients come from a linear regression that explains
+                                               p("The coefficients come from a linear regression that explains
                                                median Airbnb price per night by median home value for a given
-                                               neighborhood."),
-                                             p("More red neighborhoods have higher coefficients, indicating
+                                               neighborhood. More red neighborhoods have higher coefficients, indicating
                                                that neighborhoods of this borough have high correlation 
-                                               between airbnb prices and home values.")
-                                         ),
-                                         
-                                         mainPanel(
-                                             leafletOutput("stats_map")
-                                         )
-                                     )
-                            ),
-                            
-                            tabPanel("Graph",
-                                     sidebarPanel(
-                                         h4("About"),
-                                         p("This graph plots neighborhoods with their median house value
-                                           (in thousand dollars) on the x axis and median airbnb price
-                                           per night (in dollars) on the y axis. 
-                                           The neighborhoods are colored by their corresponding borough."),
-                                         p("A linear regression was then run to explain the airbnb 
-                                           price by median home value and the resulting best-fit line 
-                                           plotted. Below the graph is the average coefficient value 
-                                           (slope of the regression line), the 5th and 95th percentile 
-                                           values to give an indication of uncertainty associated with 
-                                           the term, and its corresponding r-squared value to give an 
-                                           indication of fit.")
-                                     ),
-                                     
-                                     mainPanel(
-                                         plotOutput("stats"),
-                                         h4("Linear Regression Information:"),
-                                         tableOutput("stats_table")
-                                     )
-                            )
-                            
-                            
-                            
+                                               between airbnb prices and home values."),
+                                               leafletOutput("stats_map")),
+                                      tabPanel("Graph",
+                                               h2("Linear Regression Graph"),
+                                               p("This graph plots neighborhoods with their median house value
+                                                (in thousand dollars) on the x axis and median airbnb price
+                                                per night (in dollars) on the y axis. 
+                                                The neighborhoods are colored by their corresponding borough."),
+                                               p("A linear regression was then run to explain the airbnb 
+                                                price by median home value and the resulting best-fit line 
+                                                plotted."),
+                                               plotOutput("stats"),
+                                               h4("Linear Regression Information:"),
+                                               p( "This table shows the average coefficient value 
+                                                (slope of the regression line), the 5th and 95th percentile 
+                                                values to give an indication of uncertainty associated with 
+                                                the term, and its corresponding r-squared value to give an 
+                                                indication of fit of the model."),
+                                               tableOutput("stats_table"))
+                                  )
+                              )
+                          )
+                    
                  ),
                  tabPanel("About",
-                          h2("About The Project"),
-                          p("This project aims to provide insights on house/lodging pricing in New York City.
-                            New York City is one of the most analyzed cities in terms of housing and lodging prices,
-                            not only because it is one of the largest cities in the US, but because it has a very unique
-                            housing market that is subject to a number of stereotypes. Through this project, I hope to shed
-                            some light on what ideas and theories about New York housing are false, and which hold some truth.
-                            I also used statistical analysis to determine if housing prices in a neighborhood could explain
-                            or even predict airbnb prices in the neighborhood."),
-                          p("The results of analyzing this data confirmed some stereotypes about NYC. For example,
-                            Manhattan had the highest median home values and the highest average Aibnb prices,
-                            and Staten Island had the lowest. However, the two neighborhoods with the highest median Airbnb 
-                            prices were in Staten Island! From my statstical analysis I found a very slight positive correlation
-                            between median housing prices and median airbnb prices in different neighborhoods. Indicating that
-                            generally as house prices increase so would airbnb prices in a neighborhood, but the correlation
-                            was not very strong (and had a low r-squared value of .14) meaning housing prices probably wouldn't
-                            be a very good predictor of airbnb prices. I did run this linear regression on each borough and found
-                            this correlation was slightly positive across the board, with Staten Island having the highest 
-                            correlation and Manhattan having the lowest."),
-                          br(),
-                          h2("About The Data"),
+                          h2("About The Data Behind the Project"),
                           p("Zillow is an online real estate database. Zillow collects data on houses, apartments, condos, etc.
                             that are for sale and for rent all across the United States. It tracks a number of variables
                             (demographic, location, credit scores, etc) including listed prices and sale prices which are 
                             used to make algorithms which create accurate estimates of house values. The data for this 
-                            project comes from Zillow's 'Zillow Research' platform (https://www.zillow.com/research/data/). 
-                            Zillow research is independent from
-                            Zillow's revenue center and aims to provide open, accurate data on the US housing market.
-                            "),
+                            project comes from Zillow's 'Zillow Research'", 
+                            a(href = 'https://www.zillow.com/research/data/', 'platform.'),
+                            "Zillow research is independent from Zillow's revenue center and aims to provide open, 
+                            accurate data on the US housing market."), 
                           p("The specific data from zillow used in this project is from September 30th 2019. 
                           The data contained information on this month's zhvi value for all homes (home, apartment,
                           condo, etc.) on the neighborhood level. Thus, there was data on neighborhoods of metro 
@@ -150,9 +164,10 @@ ui <- navbarPage(theme = shinytheme("sandstone"), "New York City Airbnb and Hous
                           br(),
                           p("Airbnb is a website that allows users to arrange and offer lodging. The company is one 
                             of the biggest lodging platforms, with big implications on local hospitality industries. 
-                            The data used for this project comes from Inside Airbnb (http://insideairbnb.com/about.html), which 
-                            is a set of data (independent from Airbnb the company) created to help people explore how Airbnb is really 
-                            being used around the world."),
+                            The data used for this project comes from",
+                            a(href = 'http://insideairbnb.com/about.html', 'Inside Airbnb'),
+                             ", which is a set of data (independent from Airbnb the company) created to help people explore 
+                             how Airbnb is really being used around the world."),
                           p("This specific data for this project contains host, lodging, location, price, and review information
                             for airbnbs in New York City. I also used data from Inside Airbnb that contained shapefiles for
                             all the neighborhoods in NYC in order to plot results on a map."),
@@ -160,8 +175,8 @@ ui <- navbarPage(theme = shinytheme("sandstone"), "New York City Airbnb and Hous
                           h2("Contact"),
                           p("Hi! I am Molly Chiang, a Sophmore at Harvard College studying Human Evolutionary
                             Biology, with a new love for data science! I can be reached at mollychiang@college.harvard.edu."),
-                          p("This project was created for my Gov 1005 final project. The code can be accessed from its
-                            github repo at https://github.com/mollyechiang/nyc-lodging."),
+                          p("This project was created for my Gov 1005 final project. The code can be accessed from its",
+                            a(href = 'https://github.com/mollyechiang/nyc-lodging', 'github repo.')),
                           br(),
                           hr("Acknowledgments:"),
                           p("Thank you to David Kane, Zillow, InsiderAirbnb, and all the members of Gov1005 
@@ -174,6 +189,8 @@ ui <- navbarPage(theme = shinytheme("sandstone"), "New York City Airbnb and Hous
 server <- function(input, output) {
     
     output$graph1 <- renderPlot({
+        
+        # load data in from rds in shiny folder
         
         nyc_data <- read_rds("nyc_data.rds")
         
@@ -265,6 +282,22 @@ server <- function(input, output) {
             ylim(0,3)
     })
     
+    output$plainmap <- renderLeaflet({
+        
+        nyc_shapes_full <- read_rds("nyc_shapes_clean.rds")
+        
+        # use leaflet to create interactive map
+        # set intial view point, add tiles, and add colored polygons based on data
+        # add legend for the data
+        
+        leaflet(nyc_shapes_full) %>% setView(lng = -73.97, lat = 40.7, zoom = 10) %>% 
+            addProviderTiles(providers$CartoDB.Positron) %>%
+            addPolygons(stroke = TRUE, color = "Black", weight = .3, smoothFactor = 0.3, fillOpacity = .1,
+                        label = nyc_shapes_full$neighbourhood)
+            
+        
+    })
+    
     
     output$map <- renderLeaflet({
         
@@ -302,9 +335,18 @@ server <- function(input, output) {
     
     output$stats_map <- renderLeaflet({
         
+        # read in rds of data
+        
         stats <- read_rds("nyc_statistics.rds")
         
+        # use colorNumeric to have our data vary by color
+        
         pal <- colorNumeric("YlOrRd", domain = stats$slope)
+        
+        # use leaflet to plot NYC with our data
+        # set view to be of NYC
+        # add tiles and polygons, adding borough name labels
+        # add a legend for the coefficients
         
         leaflet(stats) %>% setView(lng = -73.97, lat = 40.7, zoom = 10) %>% 
             addProviderTiles(providers$CartoDB.Positron) %>%
@@ -316,18 +358,6 @@ server <- function(input, output) {
                       title = "Coefficient",
                       opacity = 1
             )
-        
-        # plot coefficients explaining airbnb price by median home value by borough
-        # plot this on a map using geom_sf
-        # add labels and theme
-        
-       # ggplot() + 
-         #   geom_sf(data = stats, aes(fill = slope)) +
-         #   scale_fill_gradient(low = "wheat1", high = "red") + 
-          #  labs(title = "Boroughs Colored by Linear Regression Coefficient",
-          #       subtitle = "Coefficient Explains Airbnb Price Per Night by Home Value",
-          #       fill = "Coefficient") +
-          #  theme_minimal()
         
     })
     
